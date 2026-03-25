@@ -309,21 +309,42 @@ const LessonForm = ({ lesson, nextOrder, onSave, onCancel, loading }: LessonForm
     }
   }, [videoUrl, thumbnailMode]);
 
+  const resizeImage = (file: File, maxWidth = 800, quality = 0.85): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const ratio = Math.min(maxWidth / img.width, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => resolve(blob!), "image/webp", quality);
+      };
+      img.src = url;
+    });
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("thumbnails").upload(fileName, file);
-    if (error) {
-      toast.error("Erro ao enviar imagem: " + error.message);
-      setUploading(false);
-      return;
+    try {
+      const optimized = await resizeImage(file);
+      const fileName = `${crypto.randomUUID()}.webp`;
+      const { error } = await supabase.storage.from("thumbnails").upload(fileName, optimized, {
+        contentType: "image/webp",
+        cacheControl: "31536000",
+      });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from("thumbnails").getPublicUrl(fileName);
+      setThumbnailUrl(urlData.publicUrl);
+      setThumbnailMode("upload");
+    } catch (err: any) {
+      toast.error("Erro ao enviar imagem: " + err.message);
     }
-    const { data: urlData } = supabase.storage.from("thumbnails").getPublicUrl(fileName);
-    setThumbnailUrl(urlData.publicUrl);
-    setThumbnailMode("upload");
     setUploading(false);
   };
 
