@@ -88,8 +88,8 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
               </p>
             )}
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {lesson.link_url && (
+          {lesson.link_url && (
+            <div className="mt-4 flex justify-end">
               <a
                 href={lesson.link_url}
                 target="_blank"
@@ -99,8 +99,8 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
                 <ExternalLink className="h-4 w-4" />
                 {lesson.link_label || "Acessar Link"}
               </a>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
