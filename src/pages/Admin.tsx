@@ -366,15 +366,69 @@ const LessonForm = ({ lesson, nextOrder, onSave, onCancel, loading }: LessonForm
         <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={inputClass} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1">URL do Vídeo</label>
-          <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className={inputClass} placeholder="https://youtube.com/watch?v=..." />
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-1">URL do Vídeo</label>
+        <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className={inputClass} placeholder="https://youtube.com/watch?v=..." />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">Thumbnail</label>
+        <div className="flex gap-2 mb-3">
+          <button
+            type="button"
+            onClick={() => {
+              setThumbnailMode("youtube");
+              const thumb = getYoutubeThumbnail(videoUrl);
+              if (thumb) setThumbnailUrl(thumb);
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium border transition-colors ${
+              thumbnailMode === "youtube"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Youtube className="h-3.5 w-3.5" />
+            Do YouTube
+          </button>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium border transition-colors ${
+              thumbnailMode === "upload"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Upload className="h-3.5 w-3.5" />
+            {uploading ? "Enviando..." : "Enviar imagem"}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1">URL da Thumbnail</label>
-          <input type="url" value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)} className={inputClass} placeholder="https://..." />
-        </div>
+        {thumbnailUrl && (
+          <div className="relative inline-block">
+            <img
+              src={thumbnailUrl}
+              alt="Thumbnail preview"
+              className="h-24 w-40 rounded-md object-cover border border-border"
+            />
+            <button
+              type="button"
+              onClick={() => { setThumbnailUrl(""); setThumbnailMode("none"); }}
+              className="absolute -top-2 -right-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        )}
+        {thumbnailMode === "youtube" && !thumbnailUrl && videoUrl && (
+          <p className="text-xs text-muted-foreground">Insira uma URL válida do YouTube acima.</p>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
