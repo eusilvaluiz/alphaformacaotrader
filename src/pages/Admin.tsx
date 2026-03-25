@@ -40,12 +40,28 @@ const Admin = () => {
   const { data: members } = useQuery({
     queryKey: ["admin-members"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: profiles, error: pErr } = await supabase
         .from("profiles")
-        .select("*, user_roles(role)")
+        .select("*")
         .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
+      if (pErr) throw pErr;
+
+      const { data: roles, error: rErr } = await supabase
+        .from("user_roles")
+        .select("user_id, role");
+      if (rErr) throw rErr;
+
+      const rolesMap = new Map<string, { role: string }[]>();
+      roles?.forEach((r) => {
+        const arr = rolesMap.get(r.user_id) || [];
+        arr.push({ role: r.role });
+        rolesMap.set(r.user_id, arr);
+      });
+
+      return profiles?.map((p) => ({
+        ...p,
+        user_roles: rolesMap.get(p.user_id) || [],
+      }));
     },
     enabled: isAdmin && activeTab === "members",
   });
