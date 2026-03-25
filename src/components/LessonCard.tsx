@@ -96,7 +96,7 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
                 href={lesson.link_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <ExternalLink className="h-4 w-4" />
                 {lesson.link_label || "Acessar Link"}
