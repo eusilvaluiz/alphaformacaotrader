@@ -68,9 +68,11 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
                 onClick={() => onPlayVideo(lesson.video_url!)}
                 className="absolute inset-0 flex items-center justify-center bg-foreground/0 transition-colors hover:bg-foreground/10"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform group-hover:scale-110">
-                  <Play className="h-6 w-6 ml-0.5" />
-                </div>
+                {/* YouTube-style play button */}
+                <svg viewBox="0 0 68 48" className="h-12 w-[68px] drop-shadow-lg transition-transform group-hover:scale-110">
+                  <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#FF0000"/>
+                  <path d="M45 24L27 14v20" fill="#fff"/>
+                </svg>
               </button>
             )}
           </div>
@@ -94,7 +96,7 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
                 href={lesson.link_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-md border border-primary bg-transparent px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <ExternalLink className="h-4 w-4" />
                 {lesson.link_label || "Acessar Link"}
