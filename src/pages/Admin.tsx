@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,11 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Users, BookOpen, GripVertical, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, BookOpen, GripVertical, Eye, EyeOff, Upload, Youtube, X } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 
 type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
 type LessonInsert = Database["public"]["Tables"]["lessons"]["Insert"];
+
+function extractYoutubeId(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
+function getYoutubeThumbnail(videoUrl: string): string | null {
+  const id = extractYoutubeId(videoUrl);
+  return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : null;
+}
 
 const Admin = () => {
   const { isAdmin, loading } = useAuth();
@@ -281,10 +291,41 @@ const LessonForm = ({ lesson, nextOrder, onSave, onCancel, loading }: LessonForm
   const [description, setDescription] = useState(lesson?.description || "");
   const [videoUrl, setVideoUrl] = useState(lesson?.video_url || "");
   const [thumbnailUrl, setThumbnailUrl] = useState(lesson?.thumbnail_url || "");
+  const [thumbnailMode, setThumbnailMode] = useState<"youtube" | "upload" | "none">(
+    lesson?.thumbnail_url?.includes("youtube") || lesson?.thumbnail_url?.includes("ytimg") ? "youtube" : lesson?.thumbnail_url ? "upload" : "none"
+  );
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [linkUrl, setLinkUrl] = useState(lesson?.link_url || "");
   const [linkLabel, setLinkLabel] = useState(lesson?.link_label || "");
   const [orderIndex, setOrderIndex] = useState(lesson?.order_index ?? nextOrder);
   const [isPublished, setIsPublished] = useState(lesson?.is_published ?? false);
+
+  // Auto-extract YouTube thumbnail when video URL changes
+  useEffect(() => {
+    if (thumbnailMode === "youtube" && videoUrl) {
+      const thumb = getYoutubeThumbnail(videoUrl);
+      if (thumb) setThumbnailUrl(thumb);
+    }
+  }, [videoUrl, thumbnailMode]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from("thumbnails").upload(fileName, file);
+    if (error) {
+      toast.error("Erro ao enviar imagem: " + error.message);
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("thumbnails").getPublicUrl(fileName);
+    setThumbnailUrl(urlData.publicUrl);
+    setThumbnailMode("upload");
+    setUploading(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -325,15 +366,69 @@ const LessonForm = ({ lesson, nextOrder, onSave, onCancel, loading }: LessonForm
         <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className={inputClass} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1">URL do Vídeo</label>
-          <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className={inputClass} placeholder="https://youtube.com/watch?v=..." />
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-1">URL do Vídeo</label>
+        <input type="url" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} className={inputClass} placeholder="https://youtube.com/watch?v=..." />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">Thumbnail</label>
+        <div className="flex gap-2 mb-3">
+          <button
+            type="button"
+            onClick={() => {
+              setThumbnailMode("youtube");
+              const thumb = getYoutubeThumbnail(videoUrl);
+              if (thumb) setThumbnailUrl(thumb);
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium border transition-colors ${
+              thumbnailMode === "youtube"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Youtube className="h-3.5 w-3.5" />
+            Do YouTube
+          </button>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium border transition-colors ${
+              thumbnailMode === "upload"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Upload className="h-3.5 w-3.5" />
+            {uploading ? "Enviando..." : "Enviar imagem"}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
         </div>
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-1">URL da Thumbnail</label>
-          <input type="url" value={thumbnailUrl} onChange={(e) => setThumbnailUrl(e.target.value)} className={inputClass} placeholder="https://..." />
-        </div>
+        {thumbnailUrl && (
+          <div className="relative inline-block">
+            <img
+              src={thumbnailUrl}
+              alt="Thumbnail preview"
+              className="h-24 w-40 rounded-md object-cover border border-border"
+            />
+            <button
+              type="button"
+              onClick={() => { setThumbnailUrl(""); setThumbnailMode("none"); }}
+              className="absolute -top-2 -right-2 rounded-full bg-destructive p-1 text-destructive-foreground hover:bg-destructive/90"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        )}
+        {thumbnailMode === "youtube" && !thumbnailUrl && videoUrl && (
+          <p className="text-xs text-muted-foreground">Insira uma URL válida do YouTube acima.</p>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
