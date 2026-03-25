@@ -1,13 +1,15 @@
-import { Moon, Sun, LogOut, Shield } from "lucide-react";
+import { Moon, Sun, LogOut, Shield, User } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isOnAdmin = location.pathname === "/admin";
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-header-bg backdrop-blur-sm transition-theme">
@@ -23,11 +25,20 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate("/admin")}
+              onClick={() => navigate(isOnAdmin ? "/" : "/admin")}
               className="text-muted-foreground hover:text-foreground"
             >
-              <Shield className="mr-1 h-4 w-4" />
-              Admin
+              {isOnAdmin ? (
+                <>
+                  <User className="mr-1 h-4 w-4" />
+                  User
+                </>
+              ) : (
+                <>
+                  <Shield className="mr-1 h-4 w-4" />
+                  Admin
+                </>
+              )}
             </Button>
           )}
           <button
