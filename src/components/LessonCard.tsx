@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { Play, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { Database } from "@/integrations/supabase/types";
@@ -9,6 +10,37 @@ interface LessonCardProps {
   index: number;
   onPlayVideo: (videoUrl: string) => void;
 }
+
+const OptimizedThumbnail = ({ src, alt }: { src: string; alt: string }) => {
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    // If image is already cached, show immediately
+    if (imgRef.current?.complete && imgRef.current?.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, []);
+
+  return (
+    <div className="relative h-full w-full bg-muted">
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-muted" />
+      )}
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className={`h-full w-full object-cover transition-all duration-300 ${
+          loaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"
+        }`}
+      />
+    </div>
+  );
+};
 
 const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
   const orderLabel = String(index + 1).padStart(2, "0");
@@ -23,13 +55,9 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
       <div className="flex flex-col md:flex-row">
         {/* Thumbnail */}
         <div className="relative w-full md:w-72 shrink-0">
-          <div className="aspect-video md:aspect-auto md:h-full bg-muted overflow-hidden">
+          <div className="aspect-video md:aspect-auto md:h-full overflow-hidden">
             {lesson.thumbnail_url ? (
-              <img
-                src={lesson.thumbnail_url}
-                alt={lesson.title}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
+              <OptimizedThumbnail src={lesson.thumbnail_url} alt={lesson.title} />
             ) : (
               <div className="flex h-full min-h-[160px] items-center justify-center bg-muted">
                 <Play className="h-10 w-10 text-muted-foreground/40" />
