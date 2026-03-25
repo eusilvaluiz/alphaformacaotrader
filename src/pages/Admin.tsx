@@ -291,10 +291,41 @@ const LessonForm = ({ lesson, nextOrder, onSave, onCancel, loading }: LessonForm
   const [description, setDescription] = useState(lesson?.description || "");
   const [videoUrl, setVideoUrl] = useState(lesson?.video_url || "");
   const [thumbnailUrl, setThumbnailUrl] = useState(lesson?.thumbnail_url || "");
+  const [thumbnailMode, setThumbnailMode] = useState<"youtube" | "upload" | "none">(
+    lesson?.thumbnail_url?.includes("youtube") || lesson?.thumbnail_url?.includes("ytimg") ? "youtube" : lesson?.thumbnail_url ? "upload" : "none"
+  );
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [linkUrl, setLinkUrl] = useState(lesson?.link_url || "");
   const [linkLabel, setLinkLabel] = useState(lesson?.link_label || "");
   const [orderIndex, setOrderIndex] = useState(lesson?.order_index ?? nextOrder);
   const [isPublished, setIsPublished] = useState(lesson?.is_published ?? false);
+
+  // Auto-extract YouTube thumbnail when video URL changes
+  useEffect(() => {
+    if (thumbnailMode === "youtube" && videoUrl) {
+      const thumb = getYoutubeThumbnail(videoUrl);
+      if (thumb) setThumbnailUrl(thumb);
+    }
+  }, [videoUrl, thumbnailMode]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from("thumbnails").upload(fileName, file);
+    if (error) {
+      toast.error("Erro ao enviar imagem: " + error.message);
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("thumbnails").getPublicUrl(fileName);
+    setThumbnailUrl(urlData.publicUrl);
+    setThumbnailMode("upload");
+    setUploading(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
