@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -6,11 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Users, BookOpen, GripVertical, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, BookOpen, GripVertical, Eye, EyeOff, Upload, Youtube, X } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 
 type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
 type LessonInsert = Database["public"]["Tables"]["lessons"]["Insert"];
+
+function extractYoutubeId(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
+function getYoutubeThumbnail(videoUrl: string): string | null {
+  const id = extractYoutubeId(videoUrl);
+  return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : null;
+}
 
 const Admin = () => {
   const { isAdmin, loading } = useAuth();
