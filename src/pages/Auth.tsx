@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import authBg from "@/assets/auth-bg.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -56,7 +57,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 transition-theme">
+    <div className="relative flex min-h-screen items-center justify-center px-4 transition-theme">
+      <div
+        className="absolute inset-0 -z-10 bg-cover bg-center"
+        style={{ backgroundImage: `url(${authBg})`, opacity: 0.3 }}
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 -z-10 bg-background/60" aria-hidden="true" />
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="font-serif text-4xl font-medium italic tracking-tight text-brass md:text-5xl">
