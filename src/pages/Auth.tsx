@@ -59,11 +59,11 @@ const Auth = () => {
     <div className="flex min-h-screen items-center justify-center bg-background px-4 transition-theme">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="mb-3 font-serif text-sm italic font-normal tracking-wide text-brass">
+          <div className="font-serif text-4xl font-medium italic tracking-tight text-brass md:text-5xl">
             Formação Trader
           </div>
-          <h1 className="font-serif text-3xl font-medium tracking-tight text-foreground">
-            Área <span className="italic font-normal text-brass">de</span> Membros
+          <h1 className="mt-2 font-serif text-base font-normal tracking-wide text-muted-foreground">
+            Área <span className="italic text-brass">de</span> Membros
           </h1>
           <p className="mt-2 text-muted-foreground">
             {isLogin ? "Faça login para acessar o conteúdo" : "Crie sua conta"}
