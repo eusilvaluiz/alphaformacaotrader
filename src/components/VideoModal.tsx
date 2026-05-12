@@ -42,9 +42,9 @@ const VideoModal = ({ videoUrl, onClose }: VideoModalProps) => {
               <button
                 onClick={onClose}
                 aria-label="Fechar"
-                className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+                className="font-serif text-4xl leading-none text-brass-light hover:text-brass transition-colors"
               >
-                <X className="h-5 w-5" />
+                ×
               </button>
             </div>
             <div className="aspect-video overflow-hidden rounded-lg bg-foreground shadow-2xl">
