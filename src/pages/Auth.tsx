@@ -58,11 +58,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen items-start justify-center px-4 pt-40 pb-10 transition-theme md:items-center md:pt-4">
-      <div
-        className="absolute inset-0 -z-20 bg-cover bg-[position:center_top]"
-        style={{ backgroundImage: `url(${authBg})` }}
+    <div className="relative flex min-h-screen items-start justify-center overflow-hidden bg-black px-4 pt-40 pb-10 transition-theme md:items-center md:pt-4">
+      <img
+        src={authBg}
+        alt=""
         aria-hidden="true"
+        className="pointer-events-none absolute left-0 w-full max-w-none -z-20 select-none"
+        style={{ top: "calc(30px - 39.32vw)" }}
       />
       <div className="absolute inset-0 -z-10 bg-black/70" aria-hidden="true" />
       <div className="w-full max-w-md space-y-8">
