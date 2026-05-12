@@ -14,7 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        serif: ["Fraunces", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
