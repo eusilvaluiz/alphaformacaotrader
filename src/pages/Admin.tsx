@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Users, BookOpen, GripVertical, Eye, EyeOff, Upload, Youtube, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Users, BookOpen, GripVertical, Eye, EyeOff, Upload, Youtube, X, Mail, Key, Ban, CheckCircle2 } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 
 type Lesson = Database["public"]["Tables"]["lessons"]["Row"];
