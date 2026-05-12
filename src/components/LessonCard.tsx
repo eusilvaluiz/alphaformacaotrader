@@ -81,8 +81,8 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
         {/* Content */}
         <div className="flex flex-1 flex-col justify-between p-5 md:p-6">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">
-              {orderLabel} - {lesson.title}
+            <h3 className="font-serif text-xl font-normal leading-tight tracking-tight text-foreground">
+              <span className="italic text-brass">{orderLabel}</span> · {lesson.title}
             </h3>
             {lesson.description && (
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
