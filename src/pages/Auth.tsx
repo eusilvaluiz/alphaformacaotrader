@@ -32,6 +32,11 @@ const Auth = () => {
         toast.success("Login realizado com sucesso!");
         navigate("/");
       } else {
+        if (password !== confirmPassword) {
+          toast.error("As senhas não coincidem");
+          setLoading(false);
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
