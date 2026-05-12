@@ -64,6 +64,11 @@ export default {
         "header-bg": "hsl(var(--header-bg))",
         "lesson-card": "hsl(var(--lesson-card-bg))",
         "lesson-card-border": "hsl(var(--lesson-card-border))",
+        brass: {
+          DEFAULT: "hsl(var(--brass))",
+          light: "hsl(var(--brass-light))",
+          deep: "hsl(var(--brass-deep))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
