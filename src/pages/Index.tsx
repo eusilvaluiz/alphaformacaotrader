@@ -29,11 +29,16 @@ const Index = () => {
       <Header />
 
       <main className="container max-w-4xl py-12">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            AULAS PRÁTICAS
+        <div className="mb-14 text-center">
+          <div className="mb-5 flex items-center justify-center gap-4">
+            <span className="h-px w-12 bg-border" />
+            <span className="eyebrow">Capítulo I</span>
+            <span className="h-px w-12 bg-border" />
+          </div>
+          <h2 className="font-serif text-4xl font-normal leading-[1.05] tracking-tight text-foreground md:text-5xl">
+            Aulas <em className="font-normal not-italic text-brass-light italic">práticas</em>
           </h2>
-          <p className="mt-3 text-muted-foreground">
+          <p className="mt-5 font-serif text-lg italic font-light text-muted-foreground">
             Cada aula foi cuidadosamente estruturada para o seu aprendizado.
           </p>
         </div>
