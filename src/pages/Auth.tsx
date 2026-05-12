@@ -57,7 +57,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen items-start justify-center px-4 pt-24 pb-10 transition-theme md:items-center md:pt-4">
+    <div className="relative flex min-h-screen items-start justify-center px-4 pt-40 pb-10 transition-theme md:items-center md:pt-4">
       <div
         className="absolute inset-0 -z-20 bg-cover bg-[position:center_top]"
         style={{ backgroundImage: `url(${authBg})` }}
