@@ -80,7 +80,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm transition-theme">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-card/95 p-6 shadow-xl backdrop-blur-md transition-theme">
           {!isLogin && (
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">
