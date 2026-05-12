@@ -59,11 +59,11 @@ const Auth = () => {
     <div className="flex min-h-screen items-center justify-center bg-background px-4 transition-theme">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <div className="mb-3 font-serif text-sm italic font-normal tracking-wide text-brass">
+          <div className="font-serif text-4xl font-medium italic tracking-tight text-brass md:text-5xl">
             Formação Trader
           </div>
-          <h1 className="font-serif text-3xl font-medium tracking-tight text-foreground">
-            Área <span className="italic font-normal text-brass">de</span> Membros
+          <h1 className="mt-2 font-serif text-base font-normal tracking-wide text-muted-foreground">
+            Área <span className="italic text-brass">de</span> Membros
           </h1>
           <p className="mt-2 text-muted-foreground">
             {isLogin ? "Faça login para acessar o conteúdo" : "Crie sua conta"}
@@ -130,15 +130,24 @@ const Auth = () => {
               <label className="block text-sm font-medium text-foreground mb-1.5">
                 Confirmar senha
               </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-theme"
-                placeholder="••••••••"
-                required
-                minLength={6}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2.5 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-theme"
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
           )}
 
