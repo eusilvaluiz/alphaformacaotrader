@@ -525,4 +525,170 @@ const LessonForm = ({ lesson, nextOrder, onSave, onCancel, loading }: LessonForm
   );
 };
 
+
+// Member Edit Modal
+interface MemberEditModalProps {
+  member: any;
+  onClose: () => void;
+  onChanged: () => void;
+}
+
+const MemberEditModal = ({ member, onClose, onChanged }: MemberEditModalProps) => {
+  const [email, setEmail] = useState(member.email || "");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const call = async (action: string, payload: Record<string, unknown> = {}) => {
+    setBusy(action);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-users", {
+        body: { action, user_id: member.user_id, ...payload },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      return true;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Erro";
+      toast.error(message);
+      return false;
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleEmail = async () => {
+    if (!email || email === member.email) return;
+    if (await call("update-email", { email })) {
+      toast.success("Email atualizado");
+      onChanged();
+    }
+  };
+
+  const handlePassword = async () => {
+    if (password.length < 6) {
+      toast.error("Senha deve ter ao menos 6 caracteres");
+      return;
+    }
+    if (await call("update-password", { password })) {
+      toast.success("Senha atualizada");
+      setPassword("");
+    }
+  };
+
+  const handleBlock = async () => {
+    const next = !member.is_banned;
+    if (!confirm(next ? "Bloquear acesso deste membro?" : "Desbloquear este membro?")) return;
+    if (await call("set-banned", { banned: next })) {
+      toast.success(next ? "Acesso bloqueado" : "Acesso liberado");
+      onChanged();
+      onClose();
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm(`Excluir DEFINITIVAMENTE ${member.email}? Esta ação não pode ser desfeita.`)) return;
+    if (await call("delete")) {
+      toast.success("Membro excluído");
+      onChanged();
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div
+        className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-xl space-y-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="font-semibold text-foreground">Editar membro</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">{member.full_name || "Sem nome"}</p>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+          <div className="flex gap-2">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <button
+              onClick={handleEmail}
+              disabled={busy === "update-email" || email === member.email}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              <Mail className="h-4 w-4" />
+              Salvar
+            </button>
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1.5">Nova senha</label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Mínimo 6 caracteres"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+            <button
+              onClick={handlePassword}
+              disabled={busy === "update-password" || password.length < 6}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              <Key className="h-4 w-4" />
+              Salvar
+            </button>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col gap-2 pt-2 border-t border-border">
+          <button
+            onClick={handleBlock}
+            disabled={busy === "set-banned"}
+            className={`inline-flex items-center justify-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${
+              member.is_banned
+                ? "border-border text-foreground hover:bg-accent"
+                : "border-destructive/40 text-destructive hover:bg-destructive/10"
+            }`}
+          >
+            {member.is_banned ? <CheckCircle2 className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+            {member.is_banned ? "Desbloquear acesso" : "Bloquear acesso"}
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={busy === "delete"}
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
+          >
+            <Trash2 className="h-4 w-4" />
+            Excluir membro
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default Admin;
