@@ -59,11 +59,14 @@ const Auth = () => {
   return (
     <div className="relative flex min-h-screen items-center justify-center px-4 transition-theme">
       <div
-        className="absolute inset-0 -z-10 bg-cover bg-center"
-        style={{ backgroundImage: `url(${authBg})`, opacity: 0.3 }}
+        className="absolute inset-0 -z-20 bg-cover bg-center"
+        style={{ backgroundImage: `url(${authBg})` }}
         aria-hidden="true"
       />
-      <div className="absolute inset-0 -z-10 bg-background/60" aria-hidden="true" />
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-background/30 via-background/55 to-background/85"
+        aria-hidden="true"
+      />
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="font-serif text-4xl font-medium italic tracking-tight text-brass md:text-5xl">
@@ -77,7 +80,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm transition-theme">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-border bg-card/95 p-6 shadow-xl backdrop-blur-md transition-theme">
           {!isLogin && (
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">
