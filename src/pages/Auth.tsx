@@ -62,7 +62,7 @@ const Auth = () => {
           <div className="font-serif text-4xl font-medium italic tracking-tight text-brass md:text-5xl">
             Formação Trader
           </div>
-          <h1 className="mt-2 font-serif text-base font-normal tracking-wide text-muted-foreground">
+          <h1 className="mt-2 font-serif text-xl font-normal tracking-wide text-foreground">
             Área <span className="italic text-brass">de</span> Membros
           </h1>
           <p className="mt-2 text-muted-foreground">
