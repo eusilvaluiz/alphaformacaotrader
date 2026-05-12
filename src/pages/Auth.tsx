@@ -49,8 +49,9 @@ const Auth = () => {
         if (error) throw error;
         toast.success("Cadastro realizado! Verifique seu email.");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao processar requisição");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Erro ao processar requisição";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
