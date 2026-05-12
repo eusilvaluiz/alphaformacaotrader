@@ -58,7 +58,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen items-start justify-center overflow-hidden bg-black px-4 pt-40 pb-10 transition-theme md:items-center md:pt-4">
+    <div className="relative flex min-h-screen items-start justify-center overflow-hidden px-4 pt-40 pb-10 transition-theme md:items-center md:pt-4">
+      <div className="absolute inset-0 -z-30 bg-black" aria-hidden="true" />
       <img
         src={authBg}
         alt=""
