@@ -63,10 +63,7 @@ const Auth = () => {
         style={{ backgroundImage: `url(${authBg})` }}
         aria-hidden="true"
       />
-      <div
-        className="absolute inset-0 -z-10 bg-gradient-to-b from-background/30 via-background/55 to-background/85"
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 -z-10 bg-black/70" aria-hidden="true" />
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="font-serif text-4xl font-medium italic tracking-tight text-brass md:text-5xl">
