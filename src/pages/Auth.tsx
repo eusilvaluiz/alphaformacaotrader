@@ -10,6 +10,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,11 @@ const Auth = () => {
         toast.success("Login realizado com sucesso!");
         navigate("/");
       } else {
+        if (password !== confirmPassword) {
+          toast.error("As senhas não coincidem");
+          setLoading(false);
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -53,8 +59,11 @@ const Auth = () => {
     <div className="flex min-h-screen items-center justify-center bg-background px-4 transition-theme">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Área de Membros
+          <div className="mb-3 font-serif text-sm italic font-normal tracking-wide text-brass">
+            Formação Trader
+          </div>
+          <h1 className="font-serif text-3xl font-medium tracking-tight text-foreground">
+            Área <span className="italic font-normal text-brass">de</span> Membros
           </h1>
           <p className="mt-2 text-muted-foreground">
             {isLogin ? "Faça login para acessar o conteúdo" : "Crie sua conta"}
@@ -115,6 +124,23 @@ const Auth = () => {
               </button>
             </div>
           </div>
+
+          {!isLogin && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">
+                Confirmar senha
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-theme"
+                placeholder="••••••••"
+                required
+                minLength={6}
+              />
+            </div>
+          )}
 
           <button
             type="submit"
