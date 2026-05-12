@@ -47,7 +47,7 @@ const Admin = () => {
     enabled: isAdmin,
   });
 
-  const { data: members } = useQuery({
+  const { data: members, refetch: refetchMembers } = useQuery({
     queryKey: ["admin-members"],
     queryFn: async () => {
       const { data: profiles, error: pErr } = await supabase
@@ -68,13 +68,33 @@ const Admin = () => {
         rolesMap.set(r.user_id, arr);
       });
 
-      return profiles?.map((p) => ({
-        ...p,
-        user_roles: rolesMap.get(p.user_id) || [],
-      }));
+      // Fetch banned status from edge function
+      let bannedMap = new Map<string, string | null>();
+      try {
+        const { data: listData } = await supabase.functions.invoke("admin-users", {
+          body: { action: "list" },
+        });
+        listData?.users?.forEach((u: { id: string; banned_until: string | null }) => {
+          bannedMap.set(u.id, u.banned_until);
+        });
+      } catch (e) {
+        console.error("Failed to fetch user statuses", e);
+      }
+
+      return profiles?.map((p) => {
+        const bu = bannedMap.get(p.user_id);
+        const isBanned = bu ? new Date(bu) > new Date() : false;
+        return {
+          ...p,
+          user_roles: rolesMap.get(p.user_id) || [],
+          is_banned: isBanned,
+        };
+      });
     },
     enabled: isAdmin && activeTab === "members",
   });
+
+  const [editingMember, setEditingMember] = useState<any | null>(null);
 
   const saveLessonMutation = useMutation({
     mutationFn: async (lesson: LessonInsert & { id?: string }) => {
