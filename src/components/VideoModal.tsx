@@ -38,13 +38,15 @@ const VideoModal = ({ videoUrl, onClose }: VideoModalProps) => {
             className="relative w-full max-w-4xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={onClose}
-              aria-label="Fechar"
-              className="absolute top-2 right-2 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="mb-2 flex justify-end">
+              <button
+                onClick={onClose}
+                aria-label="Fechar"
+                className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
             <div className="aspect-video overflow-hidden rounded-lg bg-foreground shadow-2xl">
               <iframe
                 src={getEmbedUrl(videoUrl)}
