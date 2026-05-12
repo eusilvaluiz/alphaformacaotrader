@@ -265,13 +265,18 @@ const Admin = () => {
                 key={member.id}
                 className="flex items-center justify-between rounded-lg border border-border bg-card p-4 transition-theme"
               >
-                <div>
-                  <p className="font-medium text-foreground">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground truncate">
                     {member.full_name || "Sem nome"}
                   </p>
-                  <p className="text-sm text-muted-foreground">{member.email}</p>
+                  <p className="text-sm text-muted-foreground truncate">{member.email}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
+                  {member.is_banned && (
+                    <span className="rounded-full bg-destructive/10 px-2.5 py-0.5 text-xs font-medium text-destructive">
+                      bloqueado
+                    </span>
+                  )}
                   {member.user_roles?.map((r: any) => (
                     <span
                       key={r.role}
@@ -284,13 +289,28 @@ const Admin = () => {
                       {r.role}
                     </span>
                   ))}
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(member.created_at).toLocaleDateString("pt-BR")}
-                  </span>
+                  <button
+                    onClick={() => setEditingMember(member)}
+                    className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+                    title="Editar membro"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             ))}
           </div>
+        )}
+
+        {editingMember && (
+          <MemberEditModal
+            member={editingMember}
+            onClose={() => setEditingMember(null)}
+            onChanged={() => {
+              queryClient.invalidateQueries({ queryKey: ["admin-members"] });
+              refetchMembers();
+            }}
+          />
         )}
       </main>
     </div>
