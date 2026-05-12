@@ -40,9 +40,10 @@ const VideoModal = ({ videoUrl, onClose }: VideoModalProps) => {
           >
             <button
               onClick={onClose}
-              className="absolute -top-12 right-0 rounded-full p-2 text-primary-foreground hover:bg-accent/20 transition-colors"
+              aria-label="Fechar"
+              className="absolute top-2 right-2 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </button>
             <div className="aspect-video overflow-hidden rounded-lg bg-foreground shadow-2xl">
               <iframe
