@@ -74,6 +74,8 @@ const Auth = () => {
         src={authBg}
         alt=""
         aria-hidden="true"
+        fetchPriority="high"
+        decoding="async"
         className="pointer-events-none absolute left-0 w-full max-w-none -z-20 select-none"
         style={{ top: "calc(30px - 39.32vw)" }}
       />
