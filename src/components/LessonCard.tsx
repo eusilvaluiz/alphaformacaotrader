@@ -57,7 +57,7 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
         <div className="relative w-full md:w-72 shrink-0">
           <div className="aspect-video md:aspect-auto md:h-full overflow-hidden">
             {lesson.thumbnail_url ? (
-              <OptimizedThumbnail src={lesson.thumbnail_url} alt={lesson.title} />
+              <OptimizedThumbnail src={lesson.thumbnail_url} alt={lesson.title} eager={index < 2} />
             ) : (
               <div className="flex h-full min-h-[160px] items-center justify-center bg-muted">
                 <Play className="h-10 w-10 text-muted-foreground/40" />
