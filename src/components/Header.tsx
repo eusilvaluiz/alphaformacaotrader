@@ -15,10 +15,10 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b border-border bg-header-bg backdrop-blur-sm transition-theme">
       <div className="container flex h-16 items-center justify-between">
         <h1
-          className="cursor-pointer text-xl font-bold tracking-tight text-foreground"
+          className="cursor-pointer font-serif text-xl font-medium tracking-tight text-foreground"
           onClick={() => navigate("/")}
         >
-          Área de Membros
+          Área <span className="italic font-normal text-brass">de</span> Membros
         </h1>
         <div className="flex items-center gap-2">
           {isAdmin && (
