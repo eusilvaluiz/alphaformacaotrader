@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
-import authBg from "@/assets/auth-bg.png";
+import authBg from "@/assets/auth-bg.webp";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -74,6 +74,8 @@ const Auth = () => {
         src={authBg}
         alt=""
         aria-hidden="true"
+        fetchPriority="high"
+        decoding="async"
         className="pointer-events-none absolute left-0 w-full max-w-none -z-20 select-none"
         style={{ top: "calc(30px - 39.32vw)" }}
       />

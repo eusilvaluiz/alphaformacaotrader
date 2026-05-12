@@ -11,12 +11,11 @@ interface LessonCardProps {
   onPlayVideo: (videoUrl: string) => void;
 }
 
-const OptimizedThumbnail = ({ src, alt }: { src: string; alt: string }) => {
+const OptimizedThumbnail = ({ src, alt, eager }: { src: string; alt: string; eager?: boolean }) => {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    // If image is already cached, show immediately
     if (imgRef.current?.complete && imgRef.current?.naturalWidth > 0) {
       setLoaded(true);
     }
@@ -31,8 +30,9 @@ const OptimizedThumbnail = ({ src, alt }: { src: string; alt: string }) => {
         ref={imgRef}
         src={src}
         alt={alt}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
         decoding="async"
+        fetchPriority={eager ? "high" : "low"}
         onLoad={() => setLoaded(true)}
         className={`h-full w-full object-cover transition-all duration-300 ${
           loaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"
@@ -57,7 +57,7 @@ const LessonCard = ({ lesson, index, onPlayVideo }: LessonCardProps) => {
         <div className="relative w-full md:w-72 shrink-0">
           <div className="aspect-video md:aspect-auto md:h-full overflow-hidden">
             {lesson.thumbnail_url ? (
-              <OptimizedThumbnail src={lesson.thumbnail_url} alt={lesson.title} />
+              <OptimizedThumbnail src={lesson.thumbnail_url} alt={lesson.title} eager={index < 2} />
             ) : (
               <div className="flex h-full min-h-[160px] items-center justify-center bg-muted">
                 <Play className="h-10 w-10 text-muted-foreground/40" />
