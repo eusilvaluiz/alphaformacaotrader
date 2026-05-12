@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
-import authBg from "@/assets/auth-bg.png";
+import authBg from "@/assets/auth-bg.webp";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
