@@ -22,12 +22,23 @@ const Auth = () => {
     if (user) navigate("/");
   }, [user, navigate]);
 
-  // Auth screen is always dark, regardless of user theme preference
+  // Auth screen is always dark, regardless of user theme preference.
+  // Uses a MutationObserver to win against ThemeProvider's effect, which
+  // may run after this one and remove the "dark" class on initial mount.
   useEffect(() => {
     const root = document.documentElement;
     const hadDark = root.classList.contains("dark");
     root.classList.add("dark");
+
+    const observer = new MutationObserver(() => {
+      if (!root.classList.contains("dark")) {
+        root.classList.add("dark");
+      }
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+
     return () => {
+      observer.disconnect();
       if (!hadDark) root.classList.remove("dark");
     };
   }, []);
